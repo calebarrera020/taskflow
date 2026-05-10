@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register</title>
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Create Account</h1>
+
+        <div class="task-form">
+
+            <input
+                type="text"
+                id="username"
+                placeholder="Username"
+            >
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+            >
+
+            <button onclick="register()">
+                Register
+            </button>
+
+        </div>
+
+        <p style="margin-top:20px; color:white;">
+
+            Already have an account?
+
+            <a href="login.html">
+                Login
+            </a>
+
+        </p>
+
+    </div>
+
+    <script>
+
+        async function register(){
+
+            const username = document.getElementById("username").value;
+
+            const password = document.getElementById("password").value;
+
+            const response = await fetch("../backend/register.php", {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body: JSON.stringify({
+                    username,
+                    password
+                })
+
+            });
+
+            const data = await response.json();
+
+            if(data.success){
+
+                alert("Account created");
+
+                window.location.href = "login.html";
+
+            }else{
+
+                alert(data.error);
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
