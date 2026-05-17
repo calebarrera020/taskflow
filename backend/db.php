@@ -1,12 +1,12 @@
 <?php
 
-$host = "localhost";
+$host = "sql113.infinityfree.com";
 
-$user = "root";
+$user = "if0_41884737";
 
-$password = "";
+$password = "Khalifa503";
 
-$database = "taskflow";
+$database = "if0_41884737_taskflow";
 
 $conn = new mysqli(
     $host,
@@ -17,6 +17,11 @@ $conn = new mysqli(
 
 if($conn->connect_error){
 
-    die("Connection failed: " . $conn->connect_error);
+    die(
+        "Connection failed: "
+        . $conn->connect_error
+    );
 
 }
+
+?>

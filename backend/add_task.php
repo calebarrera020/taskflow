@@ -2,13 +2,14 @@
 
 session_start();
 
-error_reporting(0);
-
 header("Content-Type: application/json");
 
-include "db.php";
+require "db.php";
 
-$data = json_decode(file_get_contents("php://input"));
+$data = json_decode(
+    file_get_contents("php://input"),
+    true
+);
 
 if(!$data){
 
@@ -18,31 +19,41 @@ if(!$data){
     ]);
 
     exit;
-
 }
 
-$title = trim($data->title);
+$title = trim($data["title"] ?? "");
 
-$priority = trim($data->priority);
+$priority = $data["priority"] ?? "Medium";
 
-$due_date = trim($data->due_date);
+$category = $data["category"] ?? "Other";
 
-$user_id = $_SESSION["user_id"];
+$due_date = $data["due_date"] ?? null;
 
-$stmt = $conn->prepare("
-    INSERT INTO tasks(title, priority, due_date, user_id)
-    VALUES(?, ?, ?, ?)
-");
+$user_id = $_SESSION["user_id"] ?? null;
+
+if(!$user_id){
+
+    echo json_encode([
+        "success" => false,
+        "error" => "User not logged"
+    ]);
+
+    exit;
+}
+
+$stmt = $conn->prepare(
+    "INSERT INTO tasks
+    (title, priority, category, due_date, user_id)
+    VALUES (?, ?, ?, ?, ?)"
+);
 
 $stmt->bind_param(
-
-    "sssi",
-
+    "ssssi",
     $title,
     $priority,
+    $category,
     $due_date,
     $user_id
-
 );
 
 if($stmt->execute()){
@@ -55,7 +66,7 @@ if($stmt->execute()){
 
     echo json_encode([
         "success" => false,
-        "error" => $conn->error
+        "error" => $stmt->error
     ]);
-
 }
+?>

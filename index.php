@@ -56,7 +56,9 @@ if(!isset($_SESSION["user_id"])){
                 👤 <?php echo $_SESSION["username"]; ?>
             </span>
 
-            <button id="themeToggle"> ☀️ Light Mode </button>
+            <button id="themeToggle">
+              🌙 Mode
+            </button>
 
             <button onclick="logout()">
                 Logout

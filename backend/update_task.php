@@ -1,20 +1,46 @@
 <?php
 
-include "config.php";
+session_start();
 
-$data = json_decode(file_get_contents("php://input"));
+header("Content-Type: application/json");
+
+require "db.php";
+
+$data = json_decode(
+    file_get_contents("php://input")
+);
+
+if(!$data){
+
+    echo json_encode([
+        "success" => false
+    ]);
+
+    exit;
+
+}
 
 $id = $data->id;
 
-$title = $data->title;
+$title = trim($data->title);
 
-$stmt = $conn->prepare("
-    UPDATE tasks 
-    SET title = ?
-    WHERE id = ?
-");
+$user_id = $_SESSION["user_id"];
 
-$stmt->bind_param("si", $title, $id);
+$stmt = $conn->prepare(
+
+    "UPDATE tasks
+     SET title = ?
+     WHERE id = ?
+     AND user_id = ?"
+
+);
+
+$stmt->bind_param(
+    "sii",
+    $title,
+    $id,
+    $user_id
+);
 
 if($stmt->execute()){
 

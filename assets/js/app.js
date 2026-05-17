@@ -36,13 +36,19 @@ async function loadTasks(){
 
     taskList.innerHTML = "";
 
-    const pendingTasks = tasks.filter(task => task.completed == 0);
+    const pendingTasks = tasks.filter(
+        task => task.completed == 0
+    );
 
-    const completedTasks = tasks.filter(task => task.completed == 1);
+    const completedTasks = tasks.filter(
+        task => task.completed == 1
+    );
 
-    pendingCount.innerText = `Pending: ${pendingTasks.length}`;
+    pendingCount.innerText =
+        `Pending: ${pendingTasks.length}`;
 
-    completedCount.innerText = `Completed: ${completedTasks.length}`;
+    completedCount.innerText =
+        `Completed: ${completedTasks.length}`;
 
     const filteredTasks = tasks.filter(task => {
 
@@ -78,47 +84,26 @@ async function loadTasks(){
 
         li.classList.add("task");
 
-        if(task.completed == 1){
-
-            li.classList.add("completed-task");
-
-        }
-
         li.innerHTML = `
 
-            <div style="flex:1;">
+            <div class="task-info">
 
                 <div
-                    class="task-title"
+                    class="task-title
+                    ${task.completed == 1 ? "completed" : ""}"
                     onclick="toggleTask(${task.id}, ${task.completed})"
-                    style="
-                        cursor:pointer;
-                        font-size:18px;
-                        font-weight:bold;
-                        margin-bottom:8px;
-                        color:white;
-                    "
                 >
 
-                    ${task.completed == 1 ? "✅ " : "📌 "}
+                    ${task.completed == 1 ? "✅" : "📌"}
                     ${task.title}
 
                 </div>
 
-                <div
-                    style="
-                        display:flex;
-                        gap:15px;
-                        align-items:center;
-                        flex-wrap:wrap;
-                        font-size:14px;
-                    "
-                >
+                <div class="task-details">
 
                     <span
+                        class="priority"
                         style="
-                            padding:5px 10px;
-                            border-radius:8px;
                             background:
                             ${task.priority == 'High'
                                 ? '#ef4444'
@@ -126,20 +111,18 @@ async function loadTasks(){
                                 ? '#f59e0b'
                                 : '#22c55e'
                             };
-                            color:white;
-                            font-weight:bold;
                         "
                     >
                         ${task.priority || 'Low'}
                     </span>
 
-                    <span style="color:#cbd5e1;">
+                    <span class="date">
 
                         📅 ${task.due_date || 'No date'}
 
                     </span>
 
-                    <span style="color:#94a3b8;">
+                    <span class="category">
 
                         🗂️ ${task.category || 'Other'}
 
@@ -149,13 +132,19 @@ async function loadTasks(){
 
             </div>
 
-            <div style="display:flex; gap:10px;">
+            <div class="task-actions">
 
-                <button onclick='editTask(${task.id}, ${JSON.stringify(task.title)})'>
+                <button
+                    class="edit-btn"
+                    onclick='editTask(${task.id}, ${JSON.stringify(task.title)})'
+                >
                     Edit
                 </button>
 
-                <button onclick="deleteTask(${task.id})">
+                <button
+                    class="delete-btn"
+                    onclick="deleteTask(${task.id})"
+                >
                     Delete
                 </button>
 
@@ -171,13 +160,17 @@ async function loadTasks(){
 
 async function addTask(){
 
-    const input = document.getElementById("taskInput");
+    const input =
+        document.getElementById("taskInput");
 
-    const priorityInput = document.getElementById("priorityInput");
+    const priorityInput =
+        document.getElementById("priorityInput");
 
-    const categoryInput = document.getElementById("categoryInput");
+    const categoryInput =
+        document.getElementById("categoryInput");
 
-    const dateInput = document.getElementById("dateInput");
+    const dateInput =
+        document.getElementById("dateInput");
 
     if(input.value.trim() === ""){
 
@@ -187,27 +180,30 @@ async function addTask(){
 
     }
 
-    const response = await fetch(API + "add_task.php", {
+    const response = await fetch(
+        API + "add_task.php",
+        {
 
-        method:"POST",
+            method:"POST",
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+            headers:{
+                "Content-Type":"application/json"
+            },
 
-        body: JSON.stringify({
+            body: JSON.stringify({
 
-            title: input.value,
+                title: input.value,
 
-            priority: priorityInput.value,
+                priority: priorityInput.value,
 
-            category: categoryInput.value,
+                category: categoryInput.value,
 
-            due_date: dateInput.value
+                due_date: dateInput.value
 
-        })
+            })
 
-    });
+        }
+    );
 
     const data = await response.json();
 
@@ -223,7 +219,9 @@ async function addTask(){
 
         loadTasks();
 
-        showToast("Task added successfully");
+        showToast(
+            "Task added successfully"
+        );
 
     }
 
@@ -231,15 +229,18 @@ async function addTask(){
 
 async function deleteTask(id){
 
-    const response = await fetch(API + "delete_task.php", {
+    const response = await fetch(
+        API + "delete_task.php",
+        {
 
-        method:"POST",
+            method:"POST",
 
-        body: JSON.stringify({
-            id:id
-        })
+            body: JSON.stringify({
+                id:id
+            })
 
-    });
+        }
+    );
 
     const data = await response.json();
 
@@ -255,19 +256,23 @@ async function deleteTask(id){
 
 async function toggleTask(id, completed){
 
-    const response = await fetch(API + "toggle_task.php", {
+    const response = await fetch(
+        API + "toggle_task.php",
+        {
 
-        method:"POST",
+            method:"POST",
 
-        body: JSON.stringify({
+            body: JSON.stringify({
 
-            id:id,
+                id:id,
 
-            completed: completed == 1 ? 0 : 1
+                completed:
+                    completed == 1 ? 0 : 1
 
-        })
+            })
 
-    });
+        }
+    );
 
     const data = await response.json();
 
@@ -288,25 +293,31 @@ async function editTask(id, currentTitle){
         currentTitle
     );
 
-    if(newTitle === null || newTitle.trim() === ""){
+    if(
+        newTitle === null ||
+        newTitle.trim() === ""
+    ){
 
         return;
 
     }
 
-    const response = await fetch(API + "update_task.php", {
+    const response = await fetch(
+        API + "update_task.php",
+        {
 
-        method:"POST",
+            method:"POST",
 
-        body: JSON.stringify({
+            body: JSON.stringify({
 
-            id:id,
+                id:id,
 
-            title:newTitle
+                title:newTitle
 
-        })
+            })
 
-    });
+        }
+    );
 
     const data = await response.json();
 
@@ -330,46 +341,63 @@ function filterTasks(filter){
 
 function logout(){
 
-    window.location.href = "backend/logout.php";
+    window.location.href =
+        "backend/logout.php";
 
 }
 
-const themeToggle = document.getElementById("themeToggle");
+const themeToggle =
+    document.getElementById(
+        "themeToggle"
+    );
 
-if(themeToggle){
+themeToggle.addEventListener(
+    "click",
+    () => {
 
-    if(localStorage.getItem("theme") === "light"){
+        document.body.classList.toggle(
+            "dark-mode"
+        );
 
-        document.body.classList.add("light-mode");
+        if(
+            document.body.classList.contains(
+                "dark-mode"
+            )
+        ){
 
-        themeToggle.innerText = "🌙 Dark Mode";
-
-    }else{
-
-        themeToggle.innerText = "☀️ Light Mode";
-
-    }
-
-    themeToggle.addEventListener("click", () => {
-
-        document.body.classList.toggle("light-mode");
-
-        if(document.body.classList.contains("light-mode")){
-
-            localStorage.setItem("theme", "light");
-
-            themeToggle.innerText = "🌙 Dark Mode";
+            localStorage.setItem(
+                "theme",
+                "dark"
+            );
 
         }else{
 
-            localStorage.setItem("theme", "dark");
-
-            themeToggle.innerText = "☀️ Light Mode";
+            localStorage.setItem(
+                "theme",
+                "light"
+            );
 
         }
 
-    });
+    }
+);
 
-}
+window.addEventListener(
+    "load",
+    () => {
+
+        const savedTheme =
+            localStorage.getItem("theme");
+
+        if(savedTheme === "dark"){
+
+            document.body.classList.add(
+                "dark-mode"
+            );
+
+        }
+
+    }
+);
 
 loadTasks();
